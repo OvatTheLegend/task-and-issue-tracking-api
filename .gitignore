@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Learning & Planning Docs ###
+Java_guide/
+plan.txt
