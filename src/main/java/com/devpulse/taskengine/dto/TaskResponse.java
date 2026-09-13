@@ -10,7 +10,7 @@ import com.devpulse.taskengine.model.TaskStatus;
 public record TaskResponse(
         UUID id,
         String title,
-        String desciption,
+        String description,
         Priority priority,
         TaskStatus status,
         Instant createdAt) {
