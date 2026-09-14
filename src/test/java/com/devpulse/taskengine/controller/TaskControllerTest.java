@@ -132,4 +132,33 @@ class TaskControllerTest {
                                 .delete("/api/tasks/" + id))
                                 .andExpect(status().isNoContent()); // Asserts HTTP 204 No Content!
         }
+
+        @Test
+        void shouldReturn400WhenCreateTaskHasInvalidData() throws Exception {
+                String invalidJson = """
+                                {
+                                    "title": "",
+                                    "description": "Some description",
+                                    "priority": null
+                                }
+                                """;
+                mockMvc.perform(post("/api/tasks")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(invalidJson))
+                                .andExpect(status().isBadRequest()) // Asserts HTTP 400
+                                .andExpect(jsonPath("$.title").value("Invalid Request Content"))
+                                .andExpect(jsonPath("$.errors.title").value("Title is required and cannot be blank"))
+                                .andExpect(jsonPath("$.errors.priority").value("Priority is required"));
+        }
+
+        @Test
+        void shouldReturn404WhenTaskNotFound() throws Exception {
+                UUID nonExistentId = UUID.randomUUID();
+                when(taskService.getTaskById(nonExistentId))
+                                .thenThrow(new com.devpulse.taskengine.exception.TaskNotFoundException(nonExistentId));
+                mockMvc.perform(get("/api/tasks/" + nonExistentId))
+                                .andExpect(status().isNotFound()) // Asserts HTTP 404
+                                .andExpect(jsonPath("$.title").value("Task Not Found"))
+                                .andExpect(jsonPath("$.detail").value("Task not found with ID: " + nonExistentId));
+        }
 }

@@ -19,6 +19,8 @@ import com.devpulse.taskengine.dto.TaskResponse;
 import com.devpulse.taskengine.dto.UpdateTaskRequest;
 import com.devpulse.taskengine.service.TaskService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
@@ -30,7 +32,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponse> createTask(@RequestBody CreateTaskRequest request) {
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody CreateTaskRequest request) {
         TaskResponse created = taskService.createTask(request);
 
         URI location = URI.create("/api/tasks/" + created.id());
@@ -52,7 +54,8 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponse> updateTask(@PathVariable UUID id, @RequestBody UpdateTaskRequest request) {
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable UUID id,
+            @Valid @RequestBody UpdateTaskRequest request) {
         TaskResponse updated = taskService.updateTask(id, request);
 
         return ResponseEntity.ok(updated);
